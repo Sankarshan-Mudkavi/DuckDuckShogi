@@ -26,8 +26,8 @@ def check_same(s, t):
 
 def crawl_web(seed): # returns index, graph of inlinks
 
-    tocrawl = [seed]
-    crawled = []
+    tocrawl = set([seed])
+    crawled = set()
     graph = {}  # <url>, [list of pages it links to]
     index = {} 
     while tocrawl: 
@@ -37,8 +37,8 @@ def crawl_web(seed): # returns index, graph of inlinks
             add_page_to_index(index, page, content)
             outlinks = get_all_links(content)
             graph[page] = outlinks
-            union(tocrawl, outlinks)
-            crawled.append(page)
+            tocrawl.update(outlinks)
+            crawled.update(page)
     return index, graph
 
 def get_next_target(page):
@@ -63,11 +63,11 @@ def get_all_links(page):
             break
     return links
 
-def union(a, b):
+"""def union(a, b):
 
     for e in b:
         if e not in a:
-            a.append(e)
+            a.append(e)"""
 
 def add_page_to_index(index, url, content):
 
