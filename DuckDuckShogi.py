@@ -24,6 +24,32 @@ def check_same(s, t):
                 exist.append(descrip2)
     return exist
 
+
+def ordered_search(index, ranks, keyword):
+    if keyword in index:
+        return sort_quick(index[keyword], ranks)
+    return None
+
+def sort_quick(url_list, p_rank):
+    if len(url_list) <= 1:
+        return url_list
+    else:
+        piv = url_list[0]
+        less = []
+        great = []
+        for url in range(1, len(url_list)):
+            if p_rank[url_list[url]] <= p_rank[piv]:
+                less.append(url_list[url])
+            else:
+                great.append(url_list[url])
+        return combine(sort_quick(great, p_rank), piv, sort_quick(less, p_rank))
+
+def combine(a,b, c):
+    a.append(b)
+    for e in c:
+        a.append(e)
+    return a
+
 def crawl_web(seed): # returns index, graph of inlinks
 
     tocrawl = set([seed])
@@ -88,6 +114,27 @@ def lookup(index, keyword):
         return index[keyword]
     else:
         return None
+
+#Implementation of page-rank
+def compute_ranks(graph):    
+    d = 0.8 # damping factor
+    numloops = 10
+    
+    ranks = {}
+    npages = len(graph)
+    for page in graph:
+        ranks[page] = 1.0 / npages
+    
+    for i in range(0, numloops):
+        newranks = {}
+        for page in graph:
+            newrank = (1 - d) / npages
+            for node in graph:
+                if page in graph[node]:
+                    newrank = newrank + d * (ranks[node] / len(graph[node]))
+            newranks[page] = newrank
+        ranks = newranks
+    return ranks
 
 cache = {
    'http://www.udacity.com/cs101x/final/multi.html': """<html>
