@@ -1,5 +1,7 @@
-def multi_lookup(index, query):
+"""This code works for single word queries and multi-word queries, however it does not rank multiword queries, yet"""
 
+#Returns urls for multi-word queries
+def multi_lookup(index, query):
     urls = []
     if (len(query) != 0):
         decision = lookup(index, query[0])
@@ -15,8 +17,8 @@ def multi_lookup(index, query):
                 urls.append(decision[i][0])
     return urls
 
+#Used to see if words are beside each other in the URL
 def check_same(s, t):
-
     exist = []
     for descrip1 in s:
         for descrip2 in t:
@@ -24,12 +26,13 @@ def check_same(s, t):
                 exist.append(descrip2)
     return exist
 
-
+#Returns ranked urls
 def ordered_search(index, ranks, keyword):
     if keyword in index:
         return sort_quick(index[keyword], ranks)
     return None
 
+#Quick sort impelementation
 def sort_quick(url_list, p_rank):
     if len(url_list) <= 1:
         return url_list
@@ -50,8 +53,8 @@ def combine(a,b, c):
         a.append(e)
     return a
 
+#webcrawler
 def crawl_web(seed): # returns index, graph of inlinks
-
     tocrawl = set([seed])
     crawled = set()
     graph = {}  # <url>, [list of pages it links to]
@@ -68,7 +71,6 @@ def crawl_web(seed): # returns index, graph of inlinks
     return index, graph
 
 def get_next_target(page):
-
     start_link = page.find('<a href=')
     if start_link == -1: 
         return None, 0
@@ -78,7 +80,6 @@ def get_next_target(page):
     return url, end_quote
 
 def get_all_links(page):
-
     links = []
     while True:
         url, endpos = get_next_target(page)
@@ -89,27 +90,24 @@ def get_all_links(page):
             break
     return links
 
+#Used sets(update) to perform unions instead
 """def union(a, b):
-
     for e in b:
         if e not in a:
             a.append(e)"""
 
 def add_page_to_index(index, url, content):
-
     words = content.split()
     for i in range(len(words)):
         add_to_index(index, words[i], i, url)
 
 def add_to_index(index, keyword, pos, url):
-
     if keyword in index:
         index[keyword].append([url, pos])
     else:
         index[keyword] = [[url, pos]]
 
 def lookup(index, keyword):
-
     if keyword in index:
         return index[keyword]
     else:
@@ -136,6 +134,7 @@ def compute_ranks(graph):
         ranks = newranks
     return ranks
 
+"""Cache provided by Udacity"""
 cache = {
    'http://www.udacity.com/cs101x/final/multi.html': """<html>
 <body>
@@ -168,7 +167,6 @@ use to change the world."
 }
 
 def get_page(url):
-
     if url in cache:
         return cache[url]
     else:
